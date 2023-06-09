@@ -8,13 +8,13 @@
 
 int main(void)
 {	
-	Debug(huart1, "begin\r\n");	
-	HAL_UART_Receive_IT(&huart1, (uint8_t *)data_frame_handle.rx_buff, sizeof(data_frame_handle.rx_buff));
+  Debug(huart1, "begin\r\n");	
+  HAL_UART_Receive_IT(&huart1, (uint8_t *)data_frame_handle.rx_buff, sizeof(data_frame_handle.rx_buff));
   
   while (1)
   {
-		Data_Frame_Process(&data_frame_handle);
-		HAL_Delay(1);
+    Data_Frame_Process(&data_frame_handle);
+    HAL_Delay(1);
   }
 }
 ```
