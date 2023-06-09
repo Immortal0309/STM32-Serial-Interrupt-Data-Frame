@@ -5,29 +5,39 @@
 #include "usart.h"
 #include "Debug.h"
 
-#define DEBUG_UART             huart1  /*<Debug´®¿Ú¾ä±ú>*/
+#define DEBUG_UART             huart1  /*<Debugä¸²å£å¥æŸ„>*/
 
-#define FRAME_HEAD             0xaa    /*<Ö¡Í·>*/
-#define FRAME_END              0x55    /*<Ö¡Î²>*/
-#define FUNC_LED_OPEN_CODE     0x01    /*<¹¦ÄÜÖ¡>*/
-#define FUNC_LED_CLOSE_CODE    0x02    /*<¹¦ÄÜÖ¡>*/
-#define FUNC_LED_TOGGLE_CODE   0x03    /*<¹¦ÄÜÖ¡>*/
-#define DEVICE_CODE            0x00    /*<Éè±¸Ö¡>*/
+#define FRAME_HEAD             0xaa    /*<å¸§å¤´>*/
+#define FRAME_END              0x55    /*<å¸§å°¾>*/
+#define FUNC_LED_OPEN_CODE     0x01    /*<åŠŸèƒ½å¸§>*/
+#define FUNC_LED_CLOSE_CODE    0x02    /*<åŠŸèƒ½å¸§>*/
+#define FUNC_LED_TOGGLE_CODE   0x03    /*<åŠŸèƒ½å¸§>*/
+#define DEVICE_CODE            0x00    /*<è®¾å¤‡å¸§>*/
+
+/* <åŠŸèƒ½ç å‡½æ•°æŒ‡é’ˆ> */
+typedef void(*HandleFunc)();
+
+/* <å®šä¹‰åŠŸèƒ½ç ä¸Žå¤„ç†å‡½æ•°çš„æ˜ å°„å…³ç³»> */
+typedef struct
+{
+	uint8_t function_code;    /* <åŠŸèƒ½ç > */
+	HandleFunc func_process;  /* <åŠŸèƒ½ç å¤„ç†å‡½æ•°> */
+}FrameProceHandle_t;
 
 typedef struct
 {
-	uint8_t rx_buff[4];    /*<0:Ö¡Í·-1:Éè±¸Âð-2:¹¦ÄÜÂë-3:Ö¡Î²¡£ÀýÈç(0xaa 0x01 0x00 0x55)>*/
-	uint8_t rx_flag : 1;   /*<½ÓÊÕÍê³É±êÖ¾£º0ÎªÎ´Íê³É£¬1ÎªÍê³É>*/
+	uint8_t rx_buff[4];    /*<0:å¸§å¤´-1:è®¾å¤‡å—-2:åŠŸèƒ½ç -3:å¸§å°¾ã€‚ä¾‹å¦‚(0xaa 0x01 0x00 0x55)>*/
+	uint8_t rx_flag : 1;   /*<æŽ¥æ”¶å®Œæˆæ ‡å¿—ï¼š0ä¸ºæœªå®Œæˆï¼Œ1ä¸ºå®Œæˆ>*/
 }DataFrameHandle_t;
 
 extern DataFrameHandle_t data_frame_handle;
 
 typedef enum
 {
-	HT_ERR        = 0,      /*<±íÊ¾Ö¡Í·Ö¡Î²´íÎó>*/
-	DEV_ERR       = 1,      /*<±íÊ¾Éè±¸´íÎó>*/
-	FUNC_ERR      = 2,      /*<±íÊ¾¹¦ÄÜ´íÎó>*/
-	DATA_SUCCESS  = 3       /*<±íÊ¾³É¹¦>*/
+	HT_ERR        = 0,      /*<è¡¨ç¤ºå¸§å¤´å¸§å°¾é”™è¯¯>*/
+	DEV_ERR       = 1,      /*<è¡¨ç¤ºè®¾å¤‡é”™è¯¯>*/
+	FUNC_ERR      = 2,      /*<è¡¨ç¤ºåŠŸèƒ½é”™è¯¯>*/
+	DATA_SUCCESS  = 3       /*<è¡¨ç¤ºæˆåŠŸ>*/
 }DataFrameError;
 
 DataFrameError Data_Frame_Process(DataFrameHandle_t *data_frame_handle);
