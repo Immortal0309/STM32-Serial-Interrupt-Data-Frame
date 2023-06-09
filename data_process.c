@@ -1,52 +1,42 @@
 #include "data_process.h"
 
-/* <¹¦ÄÜÂë´¦Àíº¯ÊıÉùÃ÷> */
+/* <åŠŸèƒ½ç å¤„ç†å‡½æ•°å£°æ˜> */
 static void LED_on(void);
 static void LED_off(void);
 
-/* <¹¦ÄÜÂë´¦Àíº¯ÊıÉùÃ÷> */
+/* <åŠŸèƒ½ç å¤„ç†å‡½æ•°å£°æ˜> */
 DataFrameHandle_t data_frame_handle;
 
-/* <¹¦ÄÜÂëº¯ÊıÖ¸Õë> */
-typedef void(*HandleFunc)();
-
-/* <¶¨Òå¹¦ÄÜÂëÓë´¦Àíº¯ÊıµÄÓ³Éä¹ØÏµ> */
-typedef struct
-{
-	uint8_t function_code;    /* <¹¦ÄÜÂë> */
-	HandleFunc func_process;  /* <¹¦ÄÜÂë´¦Àíº¯Êı> */
-}FrameProceHandle_t;
-
-/* <¶¨Òå¹¦ÄÜÂëÓë´¦Àíº¯ÊıµÄÓ³Éä¹ØÏµÊı×é> */
+/* <å®šä¹‰åŠŸèƒ½ç ä¸å¤„ç†å‡½æ•°çš„æ˜ å°„å…³ç³»æ•°ç»„> */
 FrameProceHandle_t func_handle_map[] = {
 	{0x01, LED_on},
 	{0x02, LED_off},
 };
 
 /**
-  * @brief   Êı¾İÖ¡´¦Àíº¯Êı
-  * @note    data_frame£º½ÓÊÕµ½µÄÊı¾İÖ¡
-  * @param   ÎŞ
-  * @param   ÎŞ
-  * @param   ÎŞ 
-  * @retval  ÎŞ 
+  * @brief   æ•°æ®å¸§å¤„ç†å‡½æ•°
+  * @note    data_frameï¼šæ¥æ”¶åˆ°çš„æ•°æ®å¸§
+  * @param   æ— 
+  * @param   æ— 
+  * @param   æ—  
+  * @retval  æ—  
   */
 DataFrameError Data_Frame_Process(DataFrameHandle_t *data_frame)
 {
 	uint8_t i = 0;
 	
 	if(data_frame->rx_flag == 1){
-		data_frame->rx_flag = 0;    //Çå³ıÖĞ¶Ï±êÖ¾
+		data_frame->rx_flag = 0;    //æ¸…é™¤ä¸­æ–­æ ‡å¿—
 		
-		if(data_frame->rx_buff[0] == FRAME_HEAD && data_frame->rx_buff[3] == FRAME_END){  //ÅĞ¶ÏÖ¡Í·Ö¡Î²			
-			if(data_frame->rx_buff[1] == DEVICE_CODE){  //ÅĞ¶ÏÉè±¸Âë
+		if(data_frame->rx_buff[0] == FRAME_HEAD && data_frame->rx_buff[3] == FRAME_END){  //åˆ¤æ–­å¸§å¤´å¸§å°¾			
+			if(data_frame->rx_buff[1] == DEVICE_CODE){  //åˆ¤æ–­è®¾å¤‡ç 
 				
-				uint8_t func_code = data_frame->rx_buff[2];  //»ñÈ¡¹¦ÄÜÂë			
+				uint8_t func_code = data_frame->rx_buff[2];  //è·å–åŠŸèƒ½ç 			
 				
-				/* <²éÕÒ´¦Àíº¯Êı> */
+				/* <æŸ¥æ‰¾å¤„ç†å‡½æ•°> */
 				for(i = 0; i<sizeof(func_handle_map)/sizeof(func_handle_map[0]); i++){
 					if(func_handle_map[i].function_code == func_code){
-						func_handle_map[i].func_process();  //µ÷ÓÃ´¦Àíº¯Êı
+						func_handle_map[i].func_process();  //è°ƒç”¨å¤„ç†å‡½æ•°
 						break;
 					}
 				}
@@ -69,12 +59,12 @@ DataFrameError Data_Frame_Process(DataFrameHandle_t *data_frame)
 }
 
 /**
-  * @brief   ´®¿ÚÖĞ¶Ï»Øµ÷º¯Êı
-  * @note    huart£º´®¿Ú¾ä±ú
-  * @param   ÎŞ
-  * @param   ÎŞ
-  * @param   ÎŞ
-  * @retval  ÎŞ
+  * @brief   ä¸²å£ä¸­æ–­å›è°ƒå‡½æ•°
+  * @note    huartï¼šä¸²å£å¥æŸ„
+  * @param   æ— 
+  * @param   æ— 
+  * @param   æ— 
+  * @retval  æ— 
   */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
@@ -85,12 +75,12 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 }
 
 /**
-  * @brief  µãÁÁLED¹¦ÄÜÂë´¦Àíº¯Êı
-  * @note   ÓÃ»§×Ô¼º±àĞ´£¬ÓÃÓÚÊµÏÖ²»Í¬¹¦ÄÜÂë¶ÔÓ¦µÄ¹¦ÄÜ
-  * @param  ÎŞ  
-  * @param  ÎŞ
-  * @param  ÎŞ
-  * @retval ÎŞ
+  * @brief  ç‚¹äº®LEDåŠŸèƒ½ç å¤„ç†å‡½æ•°
+  * @note   ç”¨æˆ·è‡ªå·±ç¼–å†™ï¼Œç”¨äºå®ç°ä¸åŒåŠŸèƒ½ç å¯¹åº”çš„åŠŸèƒ½
+  * @param  æ—   
+  * @param  æ— 
+  * @param  æ— 
+  * @retval æ— 
   */
 static void LED_on(void)
 {
@@ -98,12 +88,12 @@ static void LED_on(void)
 }
 
 /**
-  * @brief  Ï¨ÃğLED¹¦ÄÜÂë´¦Àíº¯Êı
-  * @note   ÓÃ»§×Ô¼º±àĞ´£¬ÓÃÓÚÊµÏÖ²»Í¬¹¦ÄÜÂë¶ÔÓ¦µÄ¹¦ÄÜ
-  * @param  ÎŞ  
-  * @param  ÎŞ
-  * @param  ÎŞ
-  * @retval ÎŞ
+  * @brief  ç†„ç­LEDåŠŸèƒ½ç å¤„ç†å‡½æ•°
+  * @note   ç”¨æˆ·è‡ªå·±ç¼–å†™ï¼Œç”¨äºå®ç°ä¸åŒåŠŸèƒ½ç å¯¹åº”çš„åŠŸèƒ½
+  * @param  æ—   
+  * @param  æ— 
+  * @param  æ— 
+  * @retval æ— 
   */
 static void LED_off(void)
 {
